@@ -255,19 +255,19 @@ return {
   },
 
   -- キーバインド表示
-{
-  "folke/which-key.nvim",
-  event = "VeryLazy",
-  keys = {
-    {
-      "<leader>?",
-      function()
-        require("which-key").show({ global = false })
-      end,
-      desc = "Buffer Local Keymaps (which-key)",
+  {
+    "folke/which-key.nvim",
+    event = "VeryLazy",
+    keys = {
+      {
+        "<leader>?",
+        function()
+          require("which-key").show({ global = false })
+        end,
+        desc = "Buffer Local Keymaps (which-key)",
+      },
     },
   },
-},
   -- REST Client
   {
     "mistweaverco/kulala.nvim",
@@ -306,17 +306,22 @@ return {
           enabled = true,
           view = "cmdline_popup", -- ポップアップ表示
           format = {
-            cmdline = { icon = ">" },
-            search_down = { icon = "🔍⌄" },
-            search_up = { icon = "🔍⌃" },
-            filter = { icon = "$" },
-            lua = { icon = "☾" },
-            help = { icon = "?" },
+            cmdline = { pattern = "^:", icon = ">", lang = "vim" },
+            search_down = { kind = "search", pattern = "^/", icon = "🔍⌄", lang = "regex" },
+            search_up = { kind = "search", pattern = "^%?", icon = "🔍⌃", lang = "regex" },
+            filter = { pattern = "^:%s*!", icon = "$", lang = "bash" },
+            lua = { pattern = { "^:%s*lua%s+", "^:%s*lua%s*=%s*", "^:%s*=%s*" }, icon = "☾", lang = "lua" },
+            help = { pattern = "^:%s*he?l?p?%s+", icon = "?" },
+            input = {}, -- 入力プロンプト用
           },
         },
         messages = {
           enabled = true,
-          view = "notify", -- 通知として表示
+          view = "notify",             -- 通知として表示
+          view_error = "notify",       -- エラーメッセージ
+          view_warn = "notify",        -- 警告メッセージ
+          view_history = "messages",   -- メッセージ履歴
+          view_search = "virtualtext", -- 検索カウント
         },
         popupmenu = {
           enabled = true,
@@ -328,6 +333,31 @@ return {
             ["vim.lsp.util.stylize_markdown"] = true,
             ["cmp.entry.get_documentation"] = true,
           },
+          -- ホバー、シグネチャヘルプの表示改善
+          hover = {
+            enabled = true,
+          },
+          signature = {
+            enabled = true,
+          },
+          message = {
+            enabled = true,
+          },
+          documentation = {
+            view = "hover",
+            opts = {
+              lang = "markdown",
+              replace = true,
+              render = "plain",
+              format = { "{message}" },
+              win_options = { concealcursor = "n", conceallevel = 3 },
+            },
+          },
+        },
+        -- プリセット（便利な設定集）
+        presets = {
+          command_palette = true,       -- コマンドパレットスタイル
+          long_message_to_split = true, -- 長いメッセージを分割表示
         },
       })
     end,

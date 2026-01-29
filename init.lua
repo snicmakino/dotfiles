@@ -11,6 +11,10 @@ if not vim.loop.fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
+-- lazy.nvim をロードする前に leader キーを設定
+vim.g.mapleader = " "
+vim.g.maplocalleader = ","
+
 -- 基本設定を読み込む
 require("config.options")
 
