@@ -52,28 +52,32 @@ nvim
 
 WezTermはWindows側で動作するため、設定には特殊な対応が必要です。
 
-### 手動セットアップ（現在推奨）
+詳細は [wezterm/CLAUDE.md](wezterm/CLAUDE.md) を参照してください。
 
-1. Windows側に設定ディレクトリを作成:
-   ```powershell
-   mkdir C:\Users\<YourUsername>\.config\wezterm
-   ```
+### シンボリックリンクによるセットアップ（推奨）
 
-2. 設定ファイルをコピーまたはシンボリックリンク:
-   ```powershell
-   # オプション A: コピー（手動で同期が必要）
-   copy \\wsl$\Ubuntu\home\makino\dotfiles\wezterm\wezterm.lua C:\Users\<YourUsername>\.config\wezterm\
+**管理者権限で** PowerShell または コマンドプロンプトを開き、以下を実行:
 
-   # オプション B: シンボリックリンク（開発者モードまたは管理者権限が必要）
-   cd C:\Users\<YourUsername>\.config\wezterm
-   mklink wezterm.lua \\wsl$\Ubuntu\home\makino\dotfiles\wezterm\wezterm.lua
-   ```
+```powershell
+# PowerShell の場合
+cd $env:USERPROFILE
+Remove-Item .wezterm.lua -ErrorAction SilentlyContinue
+New-Item -ItemType SymbolicLink -Path .wezterm.lua -Target "\\wsl.localhost\Ubuntu\home\makino\dotfiles\wezterm\.wezterm.lua"
+```
 
-3. WezTermを再起動して変更を適用
+```cmd
+REM コマンドプロンプトの場合
+cd %USERPROFILE%
+del .wezterm.lua
+mklink .wezterm.lua "\\wsl.localhost\Ubuntu\home\makino\dotfiles\wezterm\.wezterm.lua"
+```
 
-**注意:** Windows側でシンボリックリンクを作成するには:
-- 開発者モードを有効にする、または
-- 管理者権限でコマンドを実行する必要があります
+設定変更はWSL側で行い、Gitで管理します。WezTermを再起動すると自動的に反映されます。
+
+**注意事項:**
+- シンボリックリンク作成には管理者権限が必要
+- ユーザー名やWSLディストリビューション名は環境に合わせて変更してください
+- シンボリックリンクの確認: `Get-Item $env:USERPROFILE\.wezterm.lua | Select-Object LinkType, Target`
 
 ## 更新
 
@@ -97,7 +101,8 @@ dotfiles/
 │           ├── keymaps.lua  # キーバインド
 │           └── lsp.lua      # LSP設定
 ├── wezterm/           # WezTerm設定
-│   └── .placeholder   # 空ディレクトリ管理用
+│   ├── .wezterm.lua   # WezTerm設定ファイル
+│   └── CLAUDE.md      # WezTerm設定ガイド
 ├── install.sh         # シンボリックリンク作成スクリプト
 └── README.md          # このファイル
 ```
