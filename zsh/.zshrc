@@ -119,3 +119,50 @@ alias vi='nvim'
 
 # zsh-autosuggestions configuration
 ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=240'
+
+# ============================================
+# Custom Configuration (migrated from .bashrc)
+# ============================================
+
+# PATH Configuration
+# ------------------
+# pipx
+export PATH="$PATH:$HOME/.local/bin"
+
+# mssql-tools18
+export PATH="$PATH:/opt/mssql-tools18/bin"
+
+# Neovim
+export PATH="$PATH:/opt/nvim-linux-x86_64/bin"
+
+# Claude CLI
+export PATH="$PATH:$HOME/.local/bin/claude"
+
+# NVM (Node Version Manager)
+# ---------------------------
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+# Add npm to PATH
+if command -v npm &> /dev/null; then
+  export PATH="$(dirname $(which npm)):$PATH"
+fi
+
+# 1Password SSH Configuration
+# ----------------------------
+# Use Windows SSH for 1Password integration in WSL
+alias ssh='ssh.exe'
+alias ssh-add='ssh-add.exe'
+
+# WSL/Expo/Android Development Environment
+# -----------------------------------------
+export WSL_HOST=$(tail -1 /etc/resolv.conf | cut -d' ' -f2)
+export ADB_SERVER_SOCKET=tcp:$WSL_HOST:5037
+export ADB_TRACE=adb
+export EXPO_DEBUG=1
+export ANDROID_SERIAL=emulator-5554
+export REACT_NATIVE_PACKAGER_HOSTNAME=$(ip addr show eth0 | grep -oP '(?<=inet\s)\d+(\.\d+){3}')
+
+# Rust/Cargo Environment
+# ----------------------
+[ -f "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"
