@@ -122,6 +122,9 @@ config.keys = {
   -- ペインを閉じる
   { key = 'x', mods = 'LEADER', action = wezterm.action.CloseCurrentPane { confirm = true } },
 
+  -- ペインのズーム切り替え（全画面表示/元に戻す）
+  { key = 'z', mods = 'LEADER', action = wezterm.action.TogglePaneZoomState },
+
   -- タブ操作
   { key = 'c', mods = 'LEADER', action = wezterm.action.SpawnTab 'CurrentPaneDomain' },
   { key = 'n', mods = 'LEADER', action = wezterm.action.ActivateTabRelative(1) },

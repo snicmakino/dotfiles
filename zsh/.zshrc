@@ -65,6 +65,17 @@ bindkey "\e\e" sudo-command-line  # ESC ESC
 eval "$(starship init zsh)"
 
 # ==========================================
+# WezTerm Integration
+# ==========================================
+# カレントディレクトリをWeztermに通知（OSC 7シーケンス）
+# これにより新しいペインやタブで現在のディレクトリが引き継がれる
+if [[ "$TERM_PROGRAM" == "WezTerm" ]]; then
+  precmd() {
+    printf "\033]7;file://%s%s\033\\" "$HOSTNAME" "$PWD"
+  }
+fi
+
+# ==========================================
 # User Configuration
 # ==========================================
 
