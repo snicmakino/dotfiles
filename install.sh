@@ -165,6 +165,74 @@ link_config() {
   return 0
 }
 
+# Link configuration to home directory
+link_home_config() {
+  local name=$1
+  local filename=$2  # Filename in home directory (e.g., .zshrc)
+  local target="$HOME/$filename"
+  local source="$DOTFILES_DIR/$name/$filename"
+
+  log_info "Processing $filename..."
+
+  # Check if source exists
+  if [ ! -e "$source" ]; then
+    log_error "Source $source does not exist"
+    return 1
+  fi
+
+  # Check if target is already a correct symlink
+  if [ -L "$target" ]; then
+    local current_target=$(readlink -f "$target")
+    if [ "$current_target" = "$source" ]; then
+      log_success "$filename already linked correctly"
+      return 0
+    else
+      log_warning "$filename points to $current_target (expected $source)"
+      if [ "$FORCE" = true ]; then
+        if [ "$DRY_RUN" = true ]; then
+          log_info "Would remove incorrect symlink"
+        else
+          rm "$target"
+          log_verbose "Removed incorrect symlink"
+        fi
+      else
+        read -p "Replace with correct link? (y/n) " -n 1 -r
+        echo
+        if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+          log_info "Skipped $filename"
+          return 0
+        fi
+        if [ "$DRY_RUN" = false ]; then
+          rm "$target"
+        fi
+      fi
+    fi
+  elif [ -e "$target" ]; then
+    # Target exists as file or directory
+    backup_if_exists "$target"
+  fi
+
+  # Create symlink
+  if [ "$DRY_RUN" = true ]; then
+    log_info "Would link $target -> $source"
+  else
+    ln -s "$source" "$target"
+    log_verbose "Created symlink $target -> $source"
+  fi
+
+  # Verify symlink
+  if [ "$DRY_RUN" = false ]; then
+    if [ -L "$target" ] && [ "$(readlink -f "$target")" = "$source" ]; then
+      log_success "$filename linked successfully"
+    else
+      log_error "Failed to create symlink for $filename"
+      return 1
+    fi
+  fi
+
+  return 0
+}
+
 # Main installation
 main() {
   echo -e "${BLUE}=== Dotfiles Installation ===${NC}\n"
@@ -183,6 +251,9 @@ main() {
   # Link nvim configuration
   link_config "nvim"
 
+  # Link zsh configuration
+  link_home_config "zsh" ".zshrc"
+
   echo
   if [ "$DRY_RUN" = true ]; then
     log_info "Dry-run completed. Run without -n to apply changes."
@@ -190,9 +261,15 @@ main() {
     log_success "Installation complete!"
     echo
     log_info "Next steps:"
-    echo "  1. Launch Neovim: nvim"
-    echo "  2. Plugins will install automatically on first run"
-    echo "  3. Check health: :checkhealth"
+    echo "  Neovim:"
+    echo "    1. Launch Neovim: nvim"
+    echo "    2. Plugins will install automatically on first run"
+    echo "    3. Check health: :checkhealth"
+    echo
+    echo "  Zsh:"
+    echo "    1. Change default shell: chsh -s \$(which zsh)"
+    echo "    2. Restart terminal or run: zsh"
+    echo "    3. Verify setup: echo \$SHELL"
   fi
 }
 

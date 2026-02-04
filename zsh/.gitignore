@@ -1,0 +1,14 @@
+# Oh My Zsh cache files
+*.zwc
+*.zwc.old
+
+# Temporary files
+*.tmp
+*.swp
+*~
+
+# History files (should not be versioned)
+.zsh_history
+
+# Custom local configuration (machine-specific)
+.zshrc.local
