@@ -80,10 +80,26 @@ return {
 
   -- ファイルツリー
   {
-    "nvim-tree/nvim-tree.lua",
-    dependencies = { "nvim-web-devicons" },
+    "nvim-neo-tree/neo-tree.nvim",
+    branch = "v3.x",
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+      "nvim-tree/nvim-web-devicons",
+      "MunifTanjim/nui.nvim",
+    },
     config = function()
-      require("nvim-tree").setup({})
+      require("neo-tree").setup({
+        close_if_last_window = true,
+        popup_border_style = "rounded",
+        enable_git_status = true,
+        enable_diagnostics = true,
+        filesystem = {
+          follow_current_file = {
+            enabled = true,
+          },
+          use_libuv_file_watcher = true,
+        },
+      })
     end,
   },
 
@@ -110,13 +126,18 @@ return {
       require("conform").setup({
         formatters_by_ft = {
           lua = { "stylua" },
-          kotlin = { "ktlint" },
+          kotlin = { "ktfmt" },
           javascript = { "prettier" },
           typescript = { "prettier" },
           typescriptreact = { "prettier" },
           javascriptreact = { "prettier" },
           html = { "prettier" },
           css = { "prettier" },
+        },
+        formatters = {
+          ktfmt = {
+            --prepend_args = { "--google-style" },
+          },
         },
         format_on_save = {
           timeout_ms = 500,
@@ -214,7 +235,7 @@ return {
             separator_style = "slant",
             offsets = {
               {
-                filetype = "NvimTree",
+                filetype = "neo-tree",
                 text = "File Explorer",
                 highlight = "Directory",
                 text_align = "left"

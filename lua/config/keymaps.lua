@@ -1,8 +1,6 @@
 local keymap = vim.keymap
 
--- リーダーキーをスペースに
-vim.g.mapleader = " "
-vim.g.maplocalleader = ","
+-- リーダーキーはinit.luaで設定済み
 
 -- ウィンドウ移動（基本操作）
 keymap.set("n", "<C-h>", "<C-w>h")
@@ -24,8 +22,8 @@ local wk = require("which-key")
 -- ノーマルモード用
 wk.add({
   -- ファイル操作
-  { "<leader>e",  ":NvimTreeToggle<CR>",           desc = "Explorer" },
-  { "<leader>ef", ":NvimTreeFindFile<CR>",         desc = "Find in tree" },
+  { "<leader>e",  ":Neotree toggle<CR>",           desc = "Explorer" },
+  { "<leader>ef", ":Neotree reveal<CR>",           desc = "Find in tree" },
 
   -- Find系（Telescope）
   { "<leader>f",  group = "Find" },
@@ -89,11 +87,8 @@ wk.add({
   { "<leader>ri", ":lua require('kulala').inspect()<CR>",             desc = "Inspect" },
   { "<leader>re", ":lua require('kulala').set_selected_env()<CR>",    desc = "Set env" },
 
-  -- LSP
-  { "gd",         vim.lsp.buf.definition,                             desc = "Go to definition" },
-  { "K",          vim.lsp.buf.hover,                                  desc = "Hover" },
-  { "<leader>rn", vim.lsp.buf.rename,                                 desc = "Rename" },
-  { "<leader>ca", vim.lsp.buf.code_action,                            desc = "Code action" },
+  -- LSP（詳細なキーマップはlsp.luaのLspAttachで設定）
+  { "<leader>l",  group = "LSP" },
 
   -- Yank paths
   { "<leader>y",  group = "Yank" },
