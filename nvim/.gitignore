@@ -1,0 +1,7 @@
+# lazy.nvimプラグインディレクトリ
+plugin/
+
+# Vimスワップファイル
+*.swp
+*.swo
+*~

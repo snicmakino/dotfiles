@@ -1,8 +1,13 @@
-# プラグインデータ（lazy.nvimが自動インストールするため不要）
-plugin/
+# install.shが作成するバックアップ
+*.backup.*
 
-# その他の一時ファイル
+# OS固有
+.DS_Store
+*~
+
+# エディタ
 *.swp
 *.swo
-*~
-.DS_Store
+
+# プレースホルダーファイルは無視しない
+!**/.placeholder
