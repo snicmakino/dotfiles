@@ -251,6 +251,26 @@ main() {
   # Link nvim configuration
   link_config "nvim"
 
+  # Link starship configuration (file, not directory)
+  starship_target="$CONFIG_DIR/starship.toml"
+  starship_source="$DOTFILES_DIR/starship/starship.toml"
+  log_info "Processing starship.toml..."
+  if [ ! -e "$starship_source" ]; then
+    log_error "Source $starship_source does not exist"
+  else
+    if [ -L "$starship_target" ] && [ "$(readlink -f "$starship_target")" = "$starship_source" ]; then
+      log_success "starship.toml already linked correctly"
+    else
+      [ -e "$starship_target" ] && backup_if_exists "$starship_target"
+      if [ "$DRY_RUN" = true ]; then
+        log_info "Would link $starship_target -> $starship_source"
+      else
+        ln -s "$starship_source" "$starship_target"
+        log_success "starship.toml linked successfully"
+      fi
+    fi
+  fi
+
   # Link zsh configuration
   link_home_config "zsh" ".zshrc"
 

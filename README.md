@@ -5,12 +5,16 @@
 ## 内容
 
 - **nvim**: Neovim設定（lazy.nvimプラグインマネージャー使用）
+- **zsh**: Zsh設定（Zapプラグインマネージャー + Starshipプロンプト）
+- **starship**: Starshipプロンプト設定（Rust製の高速プロンプト）
 - **wezterm**: WezTermターミナル設定（Windows側で動作、特殊なセットアップが必要）
 
 ## 前提条件
 
 - Git
+- Zsh
 - Neovim >= 0.9.0
+- Rust/Cargo（Starshipのインストールに必要）
 - WSL2（Windowsユーザーの場合）
 
 ## クイックスタート
@@ -32,6 +36,8 @@ nvim
 `install.sh`スクリプトは、ホームディレクトリからこのリポジトリへのシンボリックリンクを作成します:
 
 - `~/.config/nvim` → `~/dotfiles/nvim`
+- `~/.config/starship.toml` → `~/dotfiles/starship/starship.toml`
+- `~/.zshrc` → `~/dotfiles/zsh/.zshrc`
 
 ### スクリプトオプション
 
@@ -100,6 +106,12 @@ dotfiles/
 │           ├── options.lua  # Vimオプション
 │           ├── keymaps.lua  # キーバインド
 │           └── lsp.lua      # LSP設定
+├── zsh/               # Zsh設定
+│   ├── .zshrc         # Zsh設定ファイル
+│   └── CLAUDE.md      # Zsh設定ガイド
+├── starship/          # Starshipプロンプト設定
+│   ├── starship.toml  # Starship設定ファイル
+│   └── CLAUDE.md      # Starship設定ガイド
 ├── wezterm/           # WezTerm設定
 │   ├── .wezterm.lua   # WezTerm設定ファイル
 │   └── CLAUDE.md      # WezTerm設定ガイド
@@ -132,6 +144,49 @@ dotfiles/
 | `ac/af` | Claude Code: 切り替え/フォーカス |
 | `rr` | HTTPリクエスト実行（kulala） |
 | `gd/K/rn/ca` | LSP: 定義/ホバー/リネーム/コードアクション |
+
+## Zsh設定
+
+詳細なZsh設定のドキュメントは[zsh/CLAUDE.md](zsh/CLAUDE.md)を参照してください。
+
+**主要機能:**
+- Zapプラグインマネージャーによる軽量なプラグイン管理
+- Starshipプロンプト（高速で情報豊富）
+- Fish風のコマンド補完とシンタックスハイライト
+- NVM遅延ロードによる高速起動（約180ms）
+- WSL/Windows統合（1Password SSH、Android開発）
+
+**主要エイリアス:**
+
+| エイリアス | 動作 |
+|-----------|------|
+| `ll` | 詳細なファイル一覧 |
+| `vim/vi` | Neovimを起動 |
+| `ssh` | Windows SSH（1Password統合） |
+
+**キーバインド:**
+
+| キー | 動作 |
+|------|------|
+| `↑/↓` | 履歴を部分文字列検索 |
+| `ESC ESC` | コマンドの先頭にsudoを追加/削除 |
+
+## Starship設定
+
+詳細なStarship設定のドキュメントは[starship/CLAUDE.md](starship/CLAUDE.md)を参照してください。
+
+**主要機能:**
+- Gitブランチとステータス表示
+- 言語バージョン自動検出（Node.js、Rust、Python等）
+- コマンド実行時間表示（2秒以上）
+- エラーステータス表示
+- カスタマイズ可能なTOML設定
+
+**プロンプト形式:**
+```
+┌─[username][@hostname] /path/to/directory  main !?
+└─❯
+```
 
 ## トラブルシューティング
 

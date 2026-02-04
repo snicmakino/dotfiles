@@ -1,15 +1,15 @@
 # zsh Configuration
 
-This directory contains zsh shell configuration using Oh My Zsh framework.
+This directory contains zsh shell configuration using Zap plugin manager and Starship prompt.
 
 ## Overview
 
-The configuration provides a feature-rich shell environment with:
-- Oh My Zsh framework for plugin and theme management
-- Syntax highlighting and autosuggestions
-- Enhanced command completion
-- Git integration
-- Docker command completion
+The configuration provides a modern, lightweight shell environment with:
+- Zap plugin manager for fast plugin loading
+- Starship prompt for beautiful, informative prompts
+- Essential plugins: autosuggestions, syntax highlighting, history search
+- NVM lazy loading for fast startup
+- WSL-specific configurations
 
 ## File Structure
 
@@ -23,49 +23,78 @@ The configuration provides a feature-rich shell environment with:
 - `~/.zshrc` → `~/dotfiles/zsh/.zshrc`
 
 **External dependencies:**
-- `~/.oh-my-zsh/` - Oh My Zsh installation directory (managed separately)
+- `~/.local/share/zap/` - Zap installation directory
+- `~/.config/starship.toml` - Starship configuration (managed in dotfiles/starship/)
 
-## Oh My Zsh Plugins
+## Plugin Manager: Zap
 
-### Enabled Plugins
+Zap is a minimal zsh plugin manager focused on speed and simplicity.
 
-1. **git** - Git aliases and prompt integration
-2. **docker** - Docker command completion
-3. **sudo** - Press ESC twice to add sudo to current/previous command
-4. **history-substring-search** - Search command history with up/down arrows
-5. **zsh-autosuggestions** - Fish-like command suggestions based on history
-6. **zsh-syntax-highlighting** - Syntax highlighting for commands as you type
+### Installed Plugins
 
-### Plugin Installation
+1. **zsh-autosuggestions** - Fish-like autosuggestions based on history
+2. **zsh-syntax-highlighting** - Syntax highlighting for commands as you type
+3. **zsh-history-substring-search** - Search command history with partial matches
 
-The following plugins require manual installation (already done during setup):
+### Adding New Plugins
+
+Edit `.zshrc` and add a `plug` line:
 
 ```bash
-# zsh-autosuggestions
-git clone https://github.com/zsh-users/zsh-autosuggestions \
-  ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
-
-# zsh-syntax-highlighting
-git clone https://github.com/zsh-users/zsh-syntax-highlighting \
-  ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
+plug "user/repo"  # GitHub repository
 ```
+
+Example:
+```bash
+plug "zsh-users/zsh-completions"
+```
+
+Zap will automatically download and load the plugin on next shell startup.
+
+### Removing Plugins
+
+1. Remove the `plug` line from `.zshrc`
+2. Restart zsh
+3. (Optional) Remove plugin directory:
+   ```bash
+   rm -rf ~/.local/share/zap/plugins/repo-name
+   ```
+
+## Prompt: Starship
+
+Starship is a fast, customizable prompt written in Rust. See [starship/CLAUDE.md](../starship/CLAUDE.md) for detailed configuration.
+
+Key features:
+- Git branch and status
+- Language version detection (Node, Rust, Python, etc.)
+- Command execution time
+- Error status indication
 
 ## Key Features
 
-### Enabled Settings
+### History Configuration
 
-- **HYPHEN_INSENSITIVE**: Case-insensitive completion, _ and - are interchangeable
-- **ENABLE_CORRECTION**: Automatic command correction suggestions
-- **COMPLETION_WAITING_DOTS**: Show dots while waiting for completion
-- **HIST_STAMPS**: Timestamp format in history (yyyy-mm-dd)
-- **Auto-update**: Oh My Zsh updates automatically every 13 days
+- **Size**: 10,000 commands
+- **Location**: `~/.zsh_history`
+- **Deduplication**: Duplicate commands are ignored
+- **Sharing**: History is shared across all zsh sessions
 
-### Editor Configuration
+### Completion
 
-- Default editor: `nvim` (local sessions)
-- SSH sessions: `vim`
+- **Case-insensitive**: `cd downloads` matches `Downloads`
+- **Auto-completion**: Tab completion for commands and arguments
+- **Command correction**: Suggests corrections for typos
 
-### Custom Aliases
+### Key Bindings
+
+| Key Combination | Action |
+|----------------|--------|
+| `↑` / `↓` | Search history by substring |
+| `ESC ESC` | Add/remove `sudo` at beginning of command |
+| `Ctrl+R` | Reverse history search |
+| `Tab` | Auto-completion |
+
+### Aliases
 
 ```bash
 ll='ls -alF'      # Detailed list with indicators
@@ -73,150 +102,240 @@ la='ls -A'        # List almost all
 l='ls -CF'        # List in columns with indicators
 vim='nvim'        # Use neovim instead of vim
 vi='nvim'         # Use neovim for vi command
+ssh='ssh.exe'     # Use Windows SSH (WSL/1Password)
+ssh-add='ssh-add.exe'  # Use Windows ssh-add
 ```
 
-## Theme
+## Performance Optimizations
 
-Currently using: `robbyrussell` (Oh My Zsh default)
+### NVM Lazy Loading
 
-### Changing Theme
+NVM (Node Version Manager) is lazy-loaded to improve startup time:
+- NVM is not loaded on shell startup (~500ms saved)
+- NVM loads automatically when `nvm`, `node`, `npm`, or `npx` is first used
+- After first use, commands work normally
 
-To change the theme, edit `.zshrc`:
+**Startup time improvement:**
+- Before: ~750ms
+- After: ~180ms (without zap/starship overhead)
 
+### WSL Environment Variables
+
+The following environment variables are calculated on each startup:
 ```bash
-ZSH_THEME="theme-name"
+WSL_HOST                        # Windows host IP
+REACT_NATIVE_PACKAGER_HOSTNAME  # WSL network IP
 ```
 
-Popular themes:
-- `robbyrussell` - Simple, shows git branch
-- `agnoster` - Powerline-style (requires powerline fonts)
-- `powerlevel10k` - Highly customizable (requires separate installation)
+These add ~50-100ms to startup time. If not needed, comment them out in `.zshrc`.
 
-## Adding Custom Configuration
+## Platform-Specific Configurations
 
-### Method 1: Edit .zshrc directly
+### WSL/Windows Integration
 
-Add custom settings at the end of `~/dotfiles/zsh/.zshrc`:
+#### 1Password SSH Agent
+
+Uses Windows SSH for 1Password integration:
+```bash
+alias ssh='ssh.exe'
+alias ssh-add='ssh-add.exe'
+```
+
+**Setup:** Ensure 1Password SSH agent is enabled in Windows.
+
+#### Android/Expo Development
+
+Environment variables for React Native development:
+```bash
+ADB_SERVER_SOCKET              # Android Debug Bridge
+EXPO_DEBUG                     # Expo debugging
+ANDROID_SERIAL                 # Default Android device
+REACT_NATIVE_PACKAGER_HOSTNAME # Metro bundler host
+```
+
+### Rust/Cargo
+
+Cargo environment is automatically sourced if `~/.cargo/env` exists.
+
+## Custom Configuration
+
+### Adding Aliases
+
+Add aliases to the "Aliases" section in `.zshrc`:
 
 ```bash
-# Custom environment variables
+# Aliases
+alias ll='ls -alF'
+alias myalias='command'  # Add your aliases here
+```
+
+### Adding Environment Variables
+
+Add to the "PATH Configuration" or create a new section:
+
+```bash
 export MY_VAR="value"
-
-# Custom aliases
-alias myalias="command"
+export PATH="$PATH:/my/custom/path"
 ```
 
-### Method 2: Use Oh My Zsh custom folder
+### Custom Functions
 
-Create files in `~/.oh-my-zsh/custom/`:
+Add functions anywhere in `.zshrc`:
 
 ```bash
-# Create a custom file
-echo 'alias myalias="command"' > ~/.oh-my-zsh/custom/my-aliases.zsh
+# My custom function
+my_function() {
+  echo "Hello, $1!"
+}
 ```
-
-Files in the custom folder are automatically loaded.
 
 ## Troubleshooting
 
 ### Slow Shell Startup
 
-If shell startup is slow:
-
-1. Check which plugins are loaded:
-   ```bash
-   echo $plugins
-   ```
-
-2. Disable unused plugins in `.zshrc`
-
-3. Profile startup time:
+1. **Measure startup time:**
    ```bash
    time zsh -i -c exit
    ```
 
-### Plugin Not Working
+2. **Common causes:**
+   - WSL environment variable calculation (50-100ms)
+   - Zap plugin loading (first run is slower)
+   - NVM loading (should be lazy-loaded)
 
-1. Verify plugin is installed:
+3. **Solutions:**
+   - Comment out unused WSL environment variables
+   - Reduce number of plugins
+   - Check for slow commands in `.zshrc`
+
+### Plugins Not Working
+
+1. **Check Zap installation:**
    ```bash
-   ls ~/.oh-my-zsh/custom/plugins/
+   ls ~/.local/share/zap/
    ```
 
-2. Check plugin is listed in `.zshrc`:
+2. **Reinstall plugins:**
+   Delete plugin cache and restart:
    ```bash
-   grep "plugins=" ~/.zshrc
+   rm -rf ~/.local/share/zap/plugins/*
+   zsh
    ```
 
-3. Reload configuration:
+3. **Verify plugin syntax:**
    ```bash
-   source ~/.zshrc
+   grep "^plug" ~/.zshrc
    ```
 
 ### Autosuggestions Not Visible
 
 The suggestions appear in a dim gray color. If not visible:
 
-```bash
-# Adjust highlight style in .zshrc
-ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=240'
-```
+1. **Adjust highlight style in `.zshrc`:**
+   ```bash
+   ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=240'
+   ```
 
-Try different colors (0-255) if still not visible.
+2. **Try different colors (0-255):**
+   ```bash
+   ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=245'
+   ```
+
+### Starship Not Loading
+
+1. **Check if starship is installed:**
+   ```bash
+   which starship
+   starship --version
+   ```
+
+2. **Verify initialization in `.zshrc`:**
+   ```bash
+   grep "starship init" ~/.zshrc
+   ```
+
+3. **Test manually:**
+   ```bash
+   eval "$(starship init zsh)"
+   ```
+
+## Migration Notes
+
+### From Oh My Zsh
+
+This configuration migrated from Oh My Zsh to Zap + Starship for:
+- **Performance**: Faster startup time
+- **Simplicity**: Fewer dependencies, clearer configuration
+- **Modernization**: Starship's rich features and Rust performance
+
+**What was kept:**
+- All custom aliases and environment variables
+- Plugin functionality (autosuggestions, syntax highlighting, history search)
+- Git integration (via Starship)
+
+**What changed:**
+- Plugin manager: Oh My Zsh → Zap
+- Prompt: robbyrussell theme → Starship
+- Configuration style: More explicit, less magic
+
+### Rollback
+
+If you need to rollback to Oh My Zsh:
+
+1. **Backup current config:**
+   ```bash
+   mv ~/.zshrc ~/.zshrc.zap.backup
+   ```
+
+2. **Restore Oh My Zsh config:**
+   ```bash
+   # Find backup
+   ls -la ~/.zshrc.backup.*
+
+   # Restore (use the appropriate timestamp)
+   cp ~/.zshrc.backup.YYYYMMDD_HHMMSS ~/.zshrc
+   ```
+
+3. **Reinstall Oh My Zsh if needed:**
+   ```bash
+   sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+   ```
 
 ## Maintenance
 
-### Update Oh My Zsh
+### Update Zap
 
-Oh My Zsh auto-updates by default. To update manually:
+Zap doesn't have a built-in update mechanism. To update:
 
 ```bash
-omz update
+cd ~/.local/share/zap
+git pull
 ```
 
 ### Update Plugins
 
-Navigate to plugin directory and pull latest changes:
+Plugins are updated automatically when you restart zsh, or manually:
 
 ```bash
-cd ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions
-git pull
-
-cd ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting
-git pull
+rm -rf ~/.local/share/zap/plugins/*
+zsh  # Plugins will be re-downloaded
 ```
 
-### Backup and Sync
+### Update Starship
 
-The main `.zshrc` is managed by dotfiles. Other components:
+```bash
+cargo install starship --locked --force
+```
 
-- `~/.oh-my-zsh/` - Not tracked (can be reinstalled)
-- Custom plugins in `~/.oh-my-zsh/custom/plugins/` - Not tracked (can be reinstalled)
-- Custom themes/scripts in `~/.oh-my-zsh/custom/` - Consider tracking if heavily customized
-
-## Migration from Bash
-
-If you have bash configurations to migrate:
-
-1. Check existing bash aliases:
-   ```bash
-   grep alias ~/.bashrc
-   ```
-
-2. Copy relevant aliases to `.zshrc`
-
-3. Check bash environment variables:
-   ```bash
-   grep export ~/.bashrc
-   ```
-
-4. Copy relevant exports to `.zshrc`
-
-5. Test in a new zsh session before committing changes
+Or use the official installer:
+```bash
+curl -sS https://starship.rs/install.sh | sh
+```
 
 ## Resources
 
-- [Oh My Zsh Documentation](https://github.com/ohmyzsh/ohmyzsh)
-- [Oh My Zsh Plugins List](https://github.com/ohmyzsh/ohmyzsh/wiki/Plugins)
-- [Oh My Zsh Themes](https://github.com/ohmyzsh/ohmyzsh/wiki/Themes)
+- [Zap Plugin Manager](https://github.com/zap-zsh/zap)
+- [Starship Prompt](https://starship.rs/)
 - [zsh-autosuggestions](https://github.com/zsh-users/zsh-autosuggestions)
 - [zsh-syntax-highlighting](https://github.com/zsh-users/zsh-syntax-highlighting)
+- [zsh-history-substring-search](https://github.com/zsh-users/zsh-history-substring-search)
