@@ -271,6 +271,35 @@ main() {
     fi
   fi
 
+  # Link mise configuration (file, not directory)
+  mise_target="$CONFIG_DIR/mise/config.toml"
+  mise_source="$DOTFILES_DIR/mise/config.toml"
+  log_info "Processing mise/config.toml..."
+  if [ ! -e "$mise_source" ]; then
+    log_error "Source $mise_source does not exist"
+  else
+    # Create mise config directory if needed
+    if [ ! -d "$CONFIG_DIR/mise" ]; then
+      if [ "$DRY_RUN" = true ]; then
+        log_info "Would create directory $CONFIG_DIR/mise"
+      else
+        mkdir -p "$CONFIG_DIR/mise"
+        log_verbose "Created directory $CONFIG_DIR/mise"
+      fi
+    fi
+    if [ -L "$mise_target" ] && [ "$(readlink -f "$mise_target")" = "$mise_source" ]; then
+      log_success "mise/config.toml already linked correctly"
+    else
+      [ -e "$mise_target" ] && backup_if_exists "$mise_target"
+      if [ "$DRY_RUN" = true ]; then
+        log_info "Would link $mise_target -> $mise_source"
+      else
+        ln -s "$mise_source" "$mise_target"
+        log_success "mise/config.toml linked successfully"
+      fi
+    fi
+  fi
+
   # Link zsh configuration
   link_home_config "zsh" ".zshrc"
 

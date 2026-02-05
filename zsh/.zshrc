@@ -142,38 +142,10 @@ export PATH="$PATH:/opt/nvim-linux-x86_64/bin"
 export PATH="$PATH:$HOME/.local/bin/claude"
 
 # ==========================================
-# NVM (Node Version Manager) - Lazy Loading
+# mise (polyglot runtime manager)
 # ==========================================
-export NVM_DIR="$HOME/.nvm"
-
-# nvmコマンドが呼ばれたときだけNVMをロード
-nvm() {
-  unset -f nvm node npm npx
-  [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-  [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
-  nvm "$@"
-}
-
-# nodeコマンドが呼ばれたときだけNVMをロード
-node() {
-  unset -f nvm node npm npx
-  [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-  node "$@"
-}
-
-# npmコマンドが呼ばれたときだけNVMをロード
-npm() {
-  unset -f nvm node npm npx
-  [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-  npm "$@"
-}
-
-# npxコマンドが呼ばれたときだけNVMをロード
-npx() {
-  unset -f nvm node npm npx
-  [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-  npx "$@"
-}
+# https://mise.jdx.dev/
+eval "$(/home/makino/.local/bin/mise activate zsh)"
 
 # ==========================================
 # 1Password SSH Configuration
