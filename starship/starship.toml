@@ -1,113 +1,58 @@
-# Starship Configuration
-# https://starship.rs/config/
+"$schema" = 'https://starship.rs/config-schema.json'
 
-# 全体設定
 format = """
-[┌─](bold white)$username$hostname$directory$git_branch$git_status$git_state
-[└─❯](bold white) """
+$username\
+$hostname\
+$directory\
+$git_branch\
+$git_state\
+$git_status\
+$cmd_duration\
+$line_break\
+$python\
+$character"""
 
-# プロンプトの継続行
-continuation_prompt = '[∙](bold white) '
-
-# コマンド実行時間
-command_timeout = 500
-
-# ユーザー名（SSH接続時のみ表示）
-[username]
-style_user = "bold green"
-style_root = "bold red"
-format = "[$user]($style) "
-disabled = false
-show_always = false
-
-# ホスト名（SSH接続時のみ表示）
-[hostname]
-ssh_only = true
-format = "[@$hostname](bold blue) "
-disabled = false
-
-# ディレクトリ
 [directory]
-style = "bold cyan"
-format = "[$path]($style) "
+style = "blue"
 truncation_length = 3
 truncate_to_repo = true
-truncation_symbol = "…/"
 
-# Gitブランチ
+[character]
+success_symbol = "[❯](purple)"
+error_symbol = "[❯](red)"
+vimcmd_symbol = "[❮](green)"
+
 [git_branch]
-symbol = " "
-style = "bold purple"
-format = "[$symbol$branch]($style) "
+format = "[$branch]($style)"
+style = "bright-black"
 
-# Git状態
 [git_status]
-style = "bold red"
-format = "([$all_status$ahead_behind]($style) )"
-conflicted = "🏳"
-ahead = "⇡${count}"
-behind = "⇣${count}"
-diverged = "⇕⇡${ahead_count}⇣${behind_count}"
-up_to_date = ""
-untracked = "?"
-stashed = "$"
-modified = "!"
-staged = "+"
-renamed = "»"
-deleted = "✘"
+format = "[[(*$conflicted$untracked$modified$staged$renamed$deleted)](218) ($ahead_behind$stashed)]($style)"
+style = "cyan"
+conflicted = "​"
+untracked = "​"
+modified = "​"
+staged = "​"
+renamed = "​"
+deleted = "​"
+stashed = "≡"
+ahead = "⇡"
+behind = "⇣"
+diverged = "⇕"
+disabled = false
 
-# Git state（merge, rebase等）
 [git_state]
-format = '[\($state( $progress_current of $progress_total)\)]($style) '
-style = "bold yellow"
+format = '\([$state( $progress_current/$progress_total)]($style)\) '
+style = "bright-black"
 
-# 各種言語バージョン表示
-
-[nodejs]
-symbol = " "
-style = "bold green"
-format = "[$symbol($version )]($style)"
-
-[rust]
-symbol = " "
-style = "bold red"
-format = "[$symbol($version )]($style)"
+[cmd_duration]
+format = "[$duration]($style) "
+style = "yellow"
+min_time = 500
+show_milliseconds = false
 
 [python]
-symbol = " "
-style = "bold yellow"
-format = "[${symbol}${pyenv_prefix}(${version} )(\\($virtualenv\\) )]($style)"
-
-[golang]
-symbol = " "
-style = "bold cyan"
-format = "[$symbol($version )]($style)"
-
-[java]
-symbol = " "
-style = "bold red"
-format = "[$symbol($version )]($style)"
-
-[kotlin]
-symbol = "🅺 "
-style = "bold blue"
-format = "[$symbol($version )]($style)"
-
-# Docker
-[docker_context]
-symbol = " "
-style = "bold blue"
-format = "[$symbol$context]($style) "
-only_with_files = true
-
-# コマンド実行時間（2秒以上の場合表示）
-[cmd_duration]
-min_time = 2000
-style = "bold yellow"
-format = "[took $duration]($style) "
-
-# エラーステータス
-[status]
-style = "bold red"
-format = "[$symbol$status]($style) "
-disabled = false
+format = "[$virtualenv]($style) "
+style = "bright-black"
+detect_extensions = []
+detect_files = []

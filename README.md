@@ -5,7 +5,7 @@
 ## 内容
 
 - **nvim**: Neovim設定（lazy.nvimプラグインマネージャー使用）
-- **zsh**: Zsh設定（Zapプラグインマネージャー + Starshipプロンプト）
+- **zsh**: Zsh設定（zinitプラグインマネージャー + Starshipプロンプト）
 - **starship**: Starshipプロンプト設定（Rust製の高速プロンプト）
 - **wezterm**: WezTermターミナル設定（Windows側で動作、特殊なセットアップが必要）
 
@@ -14,10 +14,20 @@
 - Git
 - Zsh
 - Neovim >= 0.9.0
-- Rust/Cargo（Starshipのインストールに必要）
 - WSL2（Windowsユーザーの場合）
 
 ## クイックスタート
+
+### 1. 依存ツールのインストール
+
+```bash
+# Starship（プロンプト）のインストール
+curl -sS https://starship.rs/install.sh | sh
+
+# zinit（Zshプラグインマネージャー）は初回シェル起動時に自動インストールされます
+```
+
+### 2. dotfilesのセットアップ
 
 ```bash
 # リポジトリをクローン
@@ -27,9 +37,22 @@ git clone <your-repo-url> ~/dotfiles
 cd ~/dotfiles
 ./install.sh
 
+# シェルを再起動（zinitとプラグインが自動インストールされます）
+exec zsh
+
 # Neovimを起動（初回起動時にプラグインが自動インストールされます）
 nvim
 ```
+
+### 自動インストールされるもの
+
+以下は手動インストール不要です（初回起動時に自動セットアップ）:
+
+- **zinit**: Zshプラグインマネージャー（.zshrc内で自動インストール）
+- **zsh-autosuggestions**: コマンド補完候補
+- **zsh-history-substring-search**: 履歴検索
+- **fast-syntax-highlighting**: シンタックスハイライト
+- **lazy.nvim**: Neovimプラグインマネージャー
 
 ## インストール詳細
 
@@ -150,10 +173,10 @@ dotfiles/
 詳細なZsh設定のドキュメントは[zsh/CLAUDE.md](zsh/CLAUDE.md)を参照してください。
 
 **主要機能:**
-- Zapプラグインマネージャーによる軽量なプラグイン管理
+- zinitプラグインマネージャー（Turbo Modeによる遅延読み込み）
 - Starshipプロンプト（高速で情報豊富）
 - Fish風のコマンド補完とシンタックスハイライト
-- NVM遅延ロードによる高速起動（約180ms）
+- NVM遅延ロードによる高速起動（約150-180ms）
 - WSL/Windows統合（1Password SSH、Android開発）
 
 **主要エイリアス:**

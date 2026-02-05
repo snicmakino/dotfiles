@@ -1,11 +1,11 @@
 # zsh Configuration
 
-This directory contains zsh shell configuration using Zap plugin manager and Starship prompt.
+This directory contains zsh shell configuration using zinit plugin manager and Starship prompt.
 
 ## Overview
 
 The configuration provides a modern, lightweight shell environment with:
-- Zap plugin manager for fast plugin loading
+- zinit plugin manager with Turbo Mode (deferred loading)
 - Starship prompt for beautiful, informative prompts
 - Essential plugins: autosuggestions, syntax highlighting, history search
 - NVM lazy loading for fast startup
@@ -23,42 +23,59 @@ The configuration provides a modern, lightweight shell environment with:
 - `~/.zshrc` → `~/dotfiles/zsh/.zshrc`
 
 **External dependencies:**
-- `~/.local/share/zap/` - Zap installation directory
+- `~/.local/share/zinit/` - zinit installation directory (auto-installed)
 - `~/.config/starship.toml` - Starship configuration (managed in dotfiles/starship/)
 
-## Plugin Manager: Zap
+## Plugin Manager: zinit
 
-Zap is a minimal zsh plugin manager focused on speed and simplicity.
+zinit is a flexible and fast zsh plugin manager with advanced features like Turbo Mode.
+
+### Turbo Mode
+
+Plugins are loaded after the prompt is displayed, making shell startup instant:
+
+```zsh
+# wait: defer loading until after prompt
+# lucid: suppress loading messages
+zinit wait lucid for \
+    zsh-users/zsh-autosuggestions
+```
 
 ### Installed Plugins
 
-1. **zsh-autosuggestions** - Fish-like autosuggestions based on history
-2. **zsh-syntax-highlighting** - Syntax highlighting for commands as you type
+1. **fast-syntax-highlighting** - Syntax highlighting for commands as you type
+2. **zsh-autosuggestions** - Fish-like autosuggestions based on history
 3. **zsh-history-substring-search** - Search command history with partial matches
 
 ### Adding New Plugins
 
-Edit `.zshrc` and add a `plug` line:
+Edit `.zshrc` and add a `zinit` line:
 
-```bash
-plug "user/repo"  # GitHub repository
+```zsh
+# Basic plugin
+zinit light zsh-users/zsh-completions
+
+# With Turbo Mode (recommended)
+zinit wait lucid for \
+    zsh-users/zsh-completions
 ```
 
-Example:
-```bash
-plug "zsh-users/zsh-completions"
-```
-
-Zap will automatically download and load the plugin on next shell startup.
+zinit will automatically download and load the plugin.
 
 ### Removing Plugins
 
-1. Remove the `plug` line from `.zshrc`
+1. Remove the `zinit` line from `.zshrc`
 2. Restart zsh
 3. (Optional) Remove plugin directory:
    ```bash
-   rm -rf ~/.local/share/zap/plugins/repo-name
+   rm -rf ~/.local/share/zinit/plugins/plugin-name
    ```
+
+### Updating Plugins
+
+```bash
+zinit update --all
+```
 
 ## Prompt: Starship
 
@@ -106,28 +123,24 @@ ssh='ssh.exe'     # Use Windows SSH (WSL/1Password)
 ssh-add='ssh-add.exe'  # Use Windows ssh-add
 ```
 
-## Performance Optimizations
+## Performance
 
-### NVM Lazy Loading
+### Startup Time
 
-NVM (Node Version Manager) is lazy-loaded to improve startup time:
-- NVM is not loaded on shell startup (~500ms saved)
-- NVM loads automatically when `nvm`, `node`, `npm`, or `npx` is first used
-- After first use, commands work normally
+- **Target**: < 200ms
+- **Current**: ~150-180ms
 
-**Startup time improvement:**
-- Before: ~750ms
-- After: ~180ms (without zap/starship overhead)
+### Optimization Techniques
 
-### WSL Environment Variables
+1. **zinit Turbo Mode**: Plugins load after prompt display
+2. **NVM lazy loading**: NVM loads only when `nvm`, `node`, `npm`, or `npx` is called
+3. **WSL env lazy evaluation**: WSL environment variables calculated on-demand
 
-The following environment variables are calculated on each startup:
+### Measuring Startup Time
+
 ```bash
-WSL_HOST                        # Windows host IP
-REACT_NATIVE_PACKAGER_HOSTNAME  # WSL network IP
+time zsh -i -c exit
 ```
-
-These add ~50-100ms to startup time. If not needed, comment them out in `.zshrc`.
 
 ## Platform-Specific Configurations
 
@@ -145,12 +158,9 @@ alias ssh-add='ssh-add.exe'
 
 #### Android/Expo Development
 
-Environment variables for React Native development:
+Environment variables for React Native development (loaded on-demand):
 ```bash
-ADB_SERVER_SOCKET              # Android Debug Bridge
-EXPO_DEBUG                     # Expo debugging
-ANDROID_SERIAL                 # Default Android device
-REACT_NATIVE_PACKAGER_HOSTNAME # Metro bundler host
+_setup_wsl_env  # Call this when needed
 ```
 
 ### Rust/Cargo
@@ -164,29 +174,16 @@ Cargo environment is automatically sourced if `~/.cargo/env` exists.
 Add aliases to the "Aliases" section in `.zshrc`:
 
 ```bash
-# Aliases
-alias ll='ls -alF'
-alias myalias='command'  # Add your aliases here
+alias myalias='command'
 ```
 
 ### Adding Environment Variables
 
-Add to the "PATH Configuration" or create a new section:
+Add to the "PATH Configuration" section:
 
 ```bash
 export MY_VAR="value"
 export PATH="$PATH:/my/custom/path"
-```
-
-### Custom Functions
-
-Add functions anywhere in `.zshrc`:
-
-```bash
-# My custom function
-my_function() {
-  echo "Hello, $1!"
-}
 ```
 
 ## Troubleshooting
@@ -198,48 +195,28 @@ my_function() {
    time zsh -i -c exit
    ```
 
-2. **Common causes:**
-   - WSL environment variable calculation (50-100ms)
-   - Zap plugin loading (first run is slower)
-   - NVM loading (should be lazy-loaded)
-
-3. **Solutions:**
-   - Comment out unused WSL environment variables
-   - Reduce number of plugins
-   - Check for slow commands in `.zshrc`
+2. **Profile with zprof:**
+   Add `zmodload zsh/zprof` at the start of `.zshrc` and `zprof` at the end.
 
 ### Plugins Not Working
 
-1. **Check Zap installation:**
+1. **Check zinit installation:**
    ```bash
-   ls ~/.local/share/zap/
+   ls ~/.local/share/zinit/
    ```
 
 2. **Reinstall plugins:**
-   Delete plugin cache and restart:
    ```bash
-   rm -rf ~/.local/share/zap/plugins/*
-   zsh
-   ```
-
-3. **Verify plugin syntax:**
-   ```bash
-   grep "^plug" ~/.zshrc
+   rm -rf ~/.local/share/zinit/plugins/*
+   exec zsh
    ```
 
 ### Autosuggestions Not Visible
 
-The suggestions appear in a dim gray color. If not visible:
-
-1. **Adjust highlight style in `.zshrc`:**
-   ```bash
-   ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=240'
-   ```
-
-2. **Try different colors (0-255):**
-   ```bash
-   ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=245'
-   ```
+Adjust highlight style in `.zshrc`:
+```bash
+ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=245'
+```
 
 ### Starship Not Loading
 
@@ -249,93 +226,15 @@ The suggestions appear in a dim gray color. If not visible:
    starship --version
    ```
 
-2. **Verify initialization in `.zshrc`:**
+2. **Install if missing:**
    ```bash
-   grep "starship init" ~/.zshrc
+   curl -sS https://starship.rs/install.sh | sh
    ```
-
-3. **Test manually:**
-   ```bash
-   eval "$(starship init zsh)"
-   ```
-
-## Migration Notes
-
-### From Oh My Zsh
-
-This configuration migrated from Oh My Zsh to Zap + Starship for:
-- **Performance**: Faster startup time
-- **Simplicity**: Fewer dependencies, clearer configuration
-- **Modernization**: Starship's rich features and Rust performance
-
-**What was kept:**
-- All custom aliases and environment variables
-- Plugin functionality (autosuggestions, syntax highlighting, history search)
-- Git integration (via Starship)
-
-**What changed:**
-- Plugin manager: Oh My Zsh → Zap
-- Prompt: robbyrussell theme → Starship
-- Configuration style: More explicit, less magic
-
-### Rollback
-
-If you need to rollback to Oh My Zsh:
-
-1. **Backup current config:**
-   ```bash
-   mv ~/.zshrc ~/.zshrc.zap.backup
-   ```
-
-2. **Restore Oh My Zsh config:**
-   ```bash
-   # Find backup
-   ls -la ~/.zshrc.backup.*
-
-   # Restore (use the appropriate timestamp)
-   cp ~/.zshrc.backup.YYYYMMDD_HHMMSS ~/.zshrc
-   ```
-
-3. **Reinstall Oh My Zsh if needed:**
-   ```bash
-   sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-   ```
-
-## Maintenance
-
-### Update Zap
-
-Zap doesn't have a built-in update mechanism. To update:
-
-```bash
-cd ~/.local/share/zap
-git pull
-```
-
-### Update Plugins
-
-Plugins are updated automatically when you restart zsh, or manually:
-
-```bash
-rm -rf ~/.local/share/zap/plugins/*
-zsh  # Plugins will be re-downloaded
-```
-
-### Update Starship
-
-```bash
-cargo install starship --locked --force
-```
-
-Or use the official installer:
-```bash
-curl -sS https://starship.rs/install.sh | sh
-```
 
 ## Resources
 
-- [Zap Plugin Manager](https://github.com/zap-zsh/zap)
+- [zinit](https://github.com/zdharma-continuum/zinit)
 - [Starship Prompt](https://starship.rs/)
 - [zsh-autosuggestions](https://github.com/zsh-users/zsh-autosuggestions)
-- [zsh-syntax-highlighting](https://github.com/zsh-users/zsh-syntax-highlighting)
+- [fast-syntax-highlighting](https://github.com/zdharma-continuum/fast-syntax-highlighting)
 - [zsh-history-substring-search](https://github.com/zsh-users/zsh-history-substring-search)
