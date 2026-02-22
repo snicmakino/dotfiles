@@ -36,7 +36,7 @@ setopt CORRECT
 
 # 補完システム（プロンプト後に初期化）
 zinit wait lucid for \
-    atinit"autoload -Uz compinit && compinit" \
+    atinit"autoload -Uz compinit && compinit -i" \
     zdharma-continuum/fast-syntax-highlighting
 
 # autosuggestions: 履歴ベースの補完候補
@@ -146,13 +146,6 @@ export PATH="$PATH:$HOME/.local/bin/claude"
 # ==========================================
 # https://mise.jdx.dev/
 eval "$(/home/makino/.local/bin/mise activate zsh)"
-
-# ==========================================
-# 1Password SSH Configuration
-# ==========================================
-# Use Windows SSH for 1Password integration in WSL
-alias ssh='ssh.exe'
-alias ssh-add='ssh-add.exe'
 
 # ==========================================
 # WSL/Expo/Android Development Environment

@@ -119,8 +119,6 @@ la='ls -A'        # List almost all
 l='ls -CF'        # List in columns with indicators
 vim='nvim'        # Use neovim instead of vim
 vi='nvim'         # Use neovim for vi command
-ssh='ssh.exe'     # Use Windows SSH (WSL/1Password)
-ssh-add='ssh-add.exe'  # Use Windows ssh-add
 ```
 
 ## Performance
@@ -146,15 +144,6 @@ time zsh -i -c exit
 
 ### WSL/Windows Integration
 
-#### 1Password SSH Agent
-
-Uses Windows SSH for 1Password integration:
-```bash
-alias ssh='ssh.exe'
-alias ssh-add='ssh-add.exe'
-```
-
-**Setup:** Ensure 1Password SSH agent is enabled in Windows.
 
 #### Android/Expo Development
 
