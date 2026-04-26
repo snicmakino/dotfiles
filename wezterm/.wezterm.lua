@@ -77,7 +77,7 @@ config.colors = {
 -- ===== パフォーマンス =====
 config.scrollback_lines = 10000
 config.front_end = 'WebGpu'
-config.audible_bell = 'Disabled'
+config.audible_bell = 'SystemBeep'
 config.animation_fps = 60
 config.max_fps = 60
 

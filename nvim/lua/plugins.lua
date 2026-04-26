@@ -262,6 +262,35 @@ return {
     },
   },
 
+  -- Kotlin LSP (JetBrains公式)
+  {
+    "AlexandrosAlexiou/kotlin.nvim",
+    ft = { "kotlin" },
+    dependencies = {
+      "mason.nvim",
+      "mason-lspconfig.nvim",
+      "oil.nvim",
+      "trouble.nvim",
+    },
+    config = function()
+      require("kotlin").setup({
+        jdk_for_symbol_resolution = "/usr/lib/jvm/java-21-amazon-corretto",
+        inlay_hints = {
+          enabled = true,
+        },
+      })
+    end,
+  },
+
+  -- ファイルマネージャ（kotlin.nvimの依存）
+  {
+    "stevearc/oil.nvim",
+    dependencies = { "nvim-web-devicons" },
+    config = function()
+      require("oil").setup()
+    end,
+  },
+
   -- ClaudeCode設定:williamboman
   {
     "coder/claudecode.nvim",
@@ -300,6 +329,7 @@ return {
         debug = false,
       })
     end,
+    ui = { max_response_size = 10 * 1024 * 1024 }
   },
 
   -- 通知UI

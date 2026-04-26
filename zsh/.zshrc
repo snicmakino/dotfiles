@@ -159,3 +159,19 @@ _setup_wsl_env() {
   export ANDROID_SERIAL=emulator-5554
   export REACT_NATIVE_PACKAGER_HOSTNAME=$(ip addr show eth0 | grep -oP '(?<=inet\s)\d+(\.\d+){3}')
 }
+export PATH=$PATH:/snap/bin
+
+# ZVM
+export ZVM_INSTALL="$HOME/.zvm/self"
+export PATH="$PATH:$HOME/.zvm/bin"
+export PATH="$PATH:$ZVM_INSTALL/"
+
+#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
+export SDKMAN_DIR="$HOME/.sdkman"
+[[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
+
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f '/home/makino/google-cloud-sdk/path.zsh.inc' ]; then . '/home/makino/google-cloud-sdk/path.zsh.inc'; fi
+
+# The next line enables shell command completion for gcloud.
+if [ -f '/home/makino/google-cloud-sdk/completion.zsh.inc' ]; then . '/home/makino/google-cloud-sdk/completion.zsh.inc'; fi

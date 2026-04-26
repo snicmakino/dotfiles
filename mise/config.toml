@@ -1,4 +1,6 @@
 [tools]
+bun = "latest"
+ghq = "latest"
 node = "22"
 pnpm = "latest"
 yarn = "latest"

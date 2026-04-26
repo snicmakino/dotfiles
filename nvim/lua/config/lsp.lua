@@ -1,6 +1,6 @@
 require("mason").setup()
 require("mason-lspconfig").setup({
-  ensure_installed = { "lua_ls", "ts_ls", "kotlin_language_server" },
+  ensure_installed = { "lua_ls", "ts_ls" },
 })
 
 local capabilities = require("cmp_nvim_lsp").default_capabilities()
@@ -10,11 +10,6 @@ local lsp_config = vim.lsp.config
 
 -- TypeScript/JavaScript
 lsp_config("ts_ls", {
-  capabilities = capabilities,
-})
-
--- Kotlin
-lsp_config("kotlin_language_server", {
   capabilities = capabilities,
 })
 
