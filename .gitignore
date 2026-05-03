@@ -12,5 +12,8 @@
 # Claude Code プロジェクトレベルの自動生成ファイル
 .claude/
 
+# マシン固有のClaude Code設定
+claude/settings.local.json
+
 # プレースホルダーファイルは無視しない
 !**/.placeholder
