@@ -165,6 +165,78 @@ link_config() {
   return 0
 }
 
+# Link a specific file from dotfiles to a target path
+link_file() {
+  local source=$1
+  local target=$2
+  local display_name=$(basename "$target")
+
+  log_info "Processing $display_name..."
+
+  if [ ! -e "$source" ]; then
+    log_error "Source $source does not exist"
+    return 1
+  fi
+
+  if [ -L "$target" ]; then
+    local current_target=$(readlink -f "$target")
+    if [ "$current_target" = "$source" ]; then
+      log_success "$display_name already linked correctly"
+      return 0
+    else
+      log_warning "$display_name points to $current_target (expected $source)"
+      if [ "$FORCE" = true ]; then
+        if [ "$DRY_RUN" = true ]; then
+          log_info "Would remove incorrect symlink"
+        else
+          rm "$target"
+          log_verbose "Removed incorrect symlink"
+        fi
+      else
+        read -p "Replace with correct link? (y/n) " -n 1 -r
+        echo
+        if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+          log_info "Skipped $display_name"
+          return 0
+        fi
+        if [ "$DRY_RUN" = false ]; then
+          rm "$target"
+        fi
+      fi
+    fi
+  elif [ -e "$target" ]; then
+    backup_if_exists "$target"
+  fi
+
+  local parent_dir=$(dirname "$target")
+  if [ ! -d "$parent_dir" ]; then
+    if [ "$DRY_RUN" = true ]; then
+      log_info "Would create directory $parent_dir"
+    else
+      mkdir -p "$parent_dir"
+      log_verbose "Created directory $parent_dir"
+    fi
+  fi
+
+  if [ "$DRY_RUN" = true ]; then
+    log_info "Would link $target -> $source"
+  else
+    ln -s "$source" "$target"
+    log_verbose "Created symlink $target -> $source"
+  fi
+
+  if [ "$DRY_RUN" = false ]; then
+    if [ -L "$target" ] && [ "$(readlink -f "$target")" = "$source" ]; then
+      log_success "$display_name linked successfully"
+    else
+      log_error "Failed to create symlink for $display_name"
+      return 1
+    fi
+  fi
+
+  return 0
+}
+
 # Link configuration to home directory
 link_home_config() {
   local name=$1
@@ -302,6 +374,12 @@ main() {
 
   # Link zsh configuration
   link_home_config "zsh" ".zshrc"
+
+  # Link Claude Code configuration files
+  link_file "$DOTFILES_DIR/claude/settings.json" "$HOME/.claude/settings.json"
+  link_file "$DOTFILES_DIR/claude/statusline-command.sh" "$HOME/.claude/statusline-command.sh"
+  link_file "$DOTFILES_DIR/claude/hooks/notify.sh" "$HOME/.claude/hooks/notify.sh"
+  link_file "$DOTFILES_DIR/claude/rules/tdd-twada.md" "$HOME/.claude/rules/tdd-twada.md"
 
   echo
   if [ "$DRY_RUN" = true ]; then
