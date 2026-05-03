@@ -377,6 +377,7 @@ main() {
 
   # Link Claude Code configuration files
   link_file "$DOTFILES_DIR/claude/settings.json" "$HOME/.claude/settings.json"
+  link_file "$DOTFILES_DIR/claude/settings.local.json" "$HOME/.claude/settings.local.json"
   link_file "$DOTFILES_DIR/claude/statusline-command.sh" "$HOME/.claude/statusline-command.sh"
   link_file "$DOTFILES_DIR/claude/hooks/notify.sh" "$HOME/.claude/hooks/notify.sh"
   link_file "$DOTFILES_DIR/claude/rules/tdd-twada.md" "$HOME/.claude/rules/tdd-twada.md"

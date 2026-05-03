@@ -9,8 +9,8 @@
 *.swp
 *.swo
 
-# Claude Code ローカル設定（マシン固有）
-.claude/settings.local.json
+# Claude Code プロジェクトレベルの自動生成ファイル
+.claude/
 
 # プレースホルダーファイルは無視しない
 !**/.placeholder
