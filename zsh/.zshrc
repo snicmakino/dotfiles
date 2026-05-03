@@ -145,7 +145,7 @@ export PATH="$PATH:$HOME/.local/bin/claude"
 # mise (polyglot runtime manager)
 # ==========================================
 # https://mise.jdx.dev/
-eval "$(/home/makino/.local/bin/mise activate zsh)"
+eval "$($HOME/.local/bin/mise activate zsh)"
 
 # ==========================================
 # WSL/Expo/Android Development Environment
@@ -171,7 +171,7 @@ export SDKMAN_DIR="$HOME/.sdkman"
 [[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
 
 # The next line updates PATH for the Google Cloud SDK.
-if [ -f '/home/makino/google-cloud-sdk/path.zsh.inc' ]; then . '/home/makino/google-cloud-sdk/path.zsh.inc'; fi
+if [ -f "$HOME/google-cloud-sdk/path.zsh.inc" ]; then . "$HOME/google-cloud-sdk/path.zsh.inc"; fi
 
 # The next line enables shell command completion for gcloud.
-if [ -f '/home/makino/google-cloud-sdk/completion.zsh.inc' ]; then . '/home/makino/google-cloud-sdk/completion.zsh.inc'; fi
+if [ -f "$HOME/google-cloud-sdk/completion.zsh.inc" ]; then . "$HOME/google-cloud-sdk/completion.zsh.inc"; fi
